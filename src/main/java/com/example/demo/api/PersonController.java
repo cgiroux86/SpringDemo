@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("api/v1/person")
+@RequestMapping(value = "api/v1/person")
 @RestController
 public class PersonController {
     private final PersonService personService;
@@ -20,14 +20,24 @@ public class PersonController {
     public void addPerson(@RequestBody Person person) {
         personService.addPerson(person);
     }
-    @GetMapping("/all")
+    @GetMapping()
     public List<Person> getAllPeople() {
         return personService.getAllPeople();
     }
 
-    @GetMapping()
+    @GetMapping(path = "{id}")
     @ResponseBody
-    public Person getPersonById(@RequestParam(name = "id") UUID id) {
+    public Person getPersonById(@PathVariable("id") UUID id) {
         return personService.getPersonById(id).orElse(null);
     }
+
+    @PutMapping(value = "/update/{id}")
+    public void updatePersonById(@PathVariable("id") UUID id, @RequestBody Person person) {
+        personService.updatePersonById(id, person);
+    }
+
+//    @DeleteMapping(path = "{id}")
+//    public void deletePersonById(@PathVariable("id") UUID id) {
+//        personService.deletePersonById(id);
+//    }
 }

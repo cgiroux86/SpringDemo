@@ -19,7 +19,13 @@ public class PersonDataAccessService implements PersonDao {
 
     @Override
     public int deletePersonById(UUID id) {
-        return 0;
+        Optional <Person> foundPerson = selectPersonById(id);
+        if(foundPerson.isEmpty()) {return 0;}
+        else{
+           DB.remove(foundPerson.get());
+           return 1;
+        }
+
     }
 
     @Override
@@ -36,7 +42,16 @@ public class PersonDataAccessService implements PersonDao {
 
 
     @Override
-    public int updatePersonById(UUID id, Person person) {
-        return 0;
+    public int updatePersonById(UUID id, Person updates) {
+
+
+         return selectPersonById(id).map(p -> {
+                int indexToUpdate = DB.indexOf(p);
+                if(indexToUpdate >= 0) {
+                    DB.set(indexToUpdate, new Person(id, updates.getName()));
+                    return 1;
+                }
+                return 0;
+            }).orElse(0);
     }
 }
