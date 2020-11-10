@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:alpine
+    container_name: scrum-postgres
+    volumes:
+      - scrum-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+    environment:
+      POSTGRES_DB: springbootdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: demo_spring-app:latest
+    container_name: spring-app
+    environment:
+      DB_SERVER: postgres
+      POSTGRES_DB: springbootdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - 8080:8080
+
+    depends_on:
+      - db
+volumes:
+  scrum-data:
